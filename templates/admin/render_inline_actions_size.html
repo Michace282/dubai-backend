@@ -1,0 +1,35 @@
+{% if obj.id %}
+    <div class="sizes">
+        {% for size in obj.productsizecolorsize_set.all %}
+            <div class="size">
+                <div class="label">{{ size.size }}</div>
+                <input name="productsizecolor_set-size-element[]" value="{{ obj.id }}-{{ size.id }}" type="hidden">
+                <div class="input"><input name="productsizecolor_set-size-input-{{ obj.id }}-{{ size.id }}"
+                                          value="{{ size.count }}"></div>
+                <div class="checkbox"><input name="productsizecolor_set-size-checkbox-{{ obj.id }}-{{ size.id }}"
+                                             type="checkbox" {% if size.is_available %}checked{% else %}{% endif %}>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+
+{% endif %}
+
+<style>
+    .sizes .size {
+        display: flex;
+        align-items: center;
+    }
+
+    .size .input input {
+        width: 50px;
+        margin-right: 5px;
+    }
+
+    .size .label {
+        font-weight: bold;
+        padding-right: 10px;
+    }
+</style>
+

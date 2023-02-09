@@ -1,0 +1,135 @@
+{% if obj.id %}
+    <div class="images" id="actions{{ obj.id }}">
+        {% for image in obj.productimage_set.all %}
+            {% include "admin/image.html" with image=image %}
+        {% endfor %}
+        <div class="btn">
+            <button type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                     enable-background="new 0 0 32 32" id="Editable-line" version="1.1" viewBox="0 0 32 32"
+                     xml:space="preserve"><path d="  M23.995,13.089C23.996,13.059,24,13.03,24,13c0-4.418-3.582-8-8-8c-3.814,0-6.998,2.671-7.8,6.242C5.208,12.038,3,14.757,3,18  c0,3.866,3.134,7,7,7h13c3.314,0,6-2.686,6-6C29,16.026,26.834,13.564,23.995,13.089z" fill="none" id="XMLID_153_" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+                    <line fill="none" id="XMLID_152_" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-miterlimit="10" stroke-width="2" x1="16" x2="16" y1="11" y2="21"/>
+                    <polyline fill="none" id="XMLID_151_" points="  12,15 16,11 20,15 " stroke="#000000"
+                              stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"
+                              stroke-width="2"/></svg>
+            </button>
+            <form enctype="multipart/form-data" method="post"><input type="file" accept="image/*" multiple/></form>
+        </div>
+    </div>
+    <script>
+        django.jQuery(function () {
+            django.jQuery('#actions{{ obj.id }} button').click(function () {
+                django.jQuery('#actions{{ obj.id }} input').click();
+            });
+
+            django.jQuery(document).on('click', '#actions{{ obj.id }} .image svg', function () {
+                let id = django.jQuery(this).data('id');
+                django.jQuery.ajax({
+                    type: "POST",
+                    url: '/upload_images_delete',
+                    success: function (data) {
+                        if (data.status) {
+                            django.jQuery('#image' + id).remove()
+                        }
+                    },
+                    data: {
+                        'id': id,
+                        'csrfmiddlewaretoken': django.jQuery('input[name=csrfmiddlewaretoken]').val(),
+                    }
+                })
+            });
+
+            django.jQuery('#actions{{ obj.id }} input').change(function () {
+                let files = django.jQuery(this).get(0).files;
+
+                var formData = new FormData();
+
+                for (var i = 0; i < files.length; i++) {
+                    formData.append("uploadfiles[]", files[i], files[i].name);
+                }
+
+                formData.append("obj", {{ obj.id }});
+                formData.append("upload_file", true);
+                formData.append("csrfmiddlewaretoken", django.jQuery('input[name=csrfmiddlewaretoken]').val());
+
+                django.jQuery.ajax({
+                        type: "POST",
+                        url: '/upload_images',
+                        success: function (data) {
+                            if (data.status) {
+                                for (let i = 0; i < data.images.length; i++) {
+                                    django.jQuery('#actions{{ obj.id }} .btn').before(data.images[i])
+                                }
+
+                            }
+                        },
+                        error: function (error_data) {
+
+                        },
+                        async: true,
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        timeout: 60000
+                    }
+                );
+            });
+
+        });
+    </script>
+    <style>
+        #actions{{ obj.id }} .btn {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+        }
+
+        #actions{{ obj.id }} .btn button {
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            border: none;
+        }
+
+        #actions{{ obj.id }} .btn svg {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+        }
+
+
+        #actions{{ obj.id }} form {
+            display: none;
+        }
+
+        #actions{{ obj.id }} input {
+            display: none;
+        }
+
+        #actions{{ obj.id }} .image {
+            position: relative;
+            width: 50px;
+            min-height: 50px;
+            display: inline-block;
+        }
+
+        #actions{{ obj.id }} .image svg {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            right: -4px;
+            top: -12px;
+        }
+
+        #actions{{ obj.id }} img {
+            width: 100%;
+        }
+    </style>
+{% else %}
+    You need to create an entry for uploading images
+{% endif %}
+
+
+
