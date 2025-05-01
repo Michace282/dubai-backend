@@ -170,6 +170,7 @@ class ProductConnection(graphene.Connection):
         mens_type = params.get('mens_type', None)
         accessories_type = params.get('accessories_type', None)
         dance_shoes_type = params.get('dance_shoes_type', None)
+        kids_dancewear_type = params.get('kids_dancewear_type', None)
 
         options = {}
 
@@ -187,6 +188,9 @@ class ProductConnection(graphene.Connection):
 
         if dance_shoes_type:
             options['productsizecolor__product__dance_shoes_type'] = dance_shoes_type
+
+        if kids_dancewear_type:
+            options['productsizecolor__product__kids_dancewear_type'] = kids_dancewear_type    
 
         return Color.objects.filter(**options).filter(productsizecolor__is_available=True).distinct()
 
@@ -197,6 +201,7 @@ class ProductConnection(graphene.Connection):
         mens_type = params.get('mens_type', None)
         accessories_type = params.get('accessories_type', None)
         dance_shoes_type = params.get('dance_shoes_type', None)
+        kids_dancewear_type = params.get('kids_dancewear_type', None)
 
         options = {}
 
@@ -214,6 +219,9 @@ class ProductConnection(graphene.Connection):
 
         if dance_shoes_type:
             options['productsizecolor__product__dance_shoes_type'] = dance_shoes_type
+
+        if kids_dancewear_type:
+            options['productsizecolor__product__kids_dancewear_type'] = kids_dancewear_type    
 
         preserved = Case(
             *[When(size=size, then=pos) for pos, size in enumerate([choice[0] for choice in Size.SizeType.choices])])
@@ -384,7 +392,7 @@ class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = Product
         fields = ['is_new','price__gte', 'price__lte', 'product_type', 'ladies_type', 'mens_type', 'accessories_type',
-                  'dance_shoes_type', 'colors', 'sizes']
+                  'dance_shoes_type', 'kids_dancewear_type', 'colors', 'sizes']
 
     @property
     def qs(self):

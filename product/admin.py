@@ -110,7 +110,7 @@ class ProductSizeColorAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(SummernoteModelAdmin):
     list_display = ('__str__', 'status', 'product_type', 'profile_type', 'price','price_sale')
-    list_filter = ('status', 'product_type', 'ladies_type', 'mens_type', 'accessories_type', 'dance_shoes_type','is_new')
+    list_filter = ('status', 'product_type', 'ladies_type', 'mens_type', 'accessories_type', 'dance_shoes_type','kids_dancewear_type', 'is_new')
     inlines = (ProductSizeColorInline,)
     autocomplete_fields = ('works_best_with',)
     search_fields = ('name', 'data', 'description', 'model_description')
@@ -124,6 +124,8 @@ class ProductAdmin(SummernoteModelAdmin):
             return obj.get_accessories_type_display()
         if obj.product_type == 'dance_shoes':
             return obj.get_dance_shoes_type_display()
+        if obj.product_type == 'kids_dancewear':
+            return obj.get_kids_dancewear_type_display()    
         return '-'
 
     fieldsets = (
@@ -131,7 +133,7 @@ class ProductAdmin(SummernoteModelAdmin):
             'fields': (
                 ('status','is_new'),
                 'article',
-                ('name', 'product_type', 'ladies_type', 'mens_type', 'accessories_type', 'dance_shoes_type',),
+                ('name', 'product_type', 'ladies_type', 'mens_type', 'accessories_type', 'dance_shoes_type', 'kids_dancewear_type',),
                 ('price','price_sale'),
                 'description',
                 'size_chart',

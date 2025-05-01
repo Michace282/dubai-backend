@@ -5,6 +5,7 @@ django.jQuery(function () {
         django.jQuery('.field-box.field-mens_type').hide();
         django.jQuery('.field-box.field-accessories_type').hide();
         django.jQuery('.field-box.field-dance_shoes_type').hide();
+        django.jQuery('.field-box.field-kids_dancewear_type').hide();
         
         if (django.jQuery('#id_product_type').val() == 'ladies') {
             django.jQuery('.field-box.field-ladies_type').show();
@@ -17,6 +18,9 @@ django.jQuery(function () {
         }
         if (django.jQuery('#id_product_type').val() == 'dance_shoes') {
             django.jQuery('.field-box.field-dance_shoes_type').show();
+        }
+        if (django.jQuery('#id_product_type').val() == 'kids_dancewear') {
+            django.jQuery('.field-box.field-kids_dancewear_type').show();
         }
     }
     

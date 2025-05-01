@@ -4,6 +4,7 @@ from product.schema import Query as ProductQuery, Mutation as ProductMutation
 from stock.schema import Query as StockQuery
 from page.schema import Query as PageQuery
 from gift.schema import Query as GiftQuery
+from homeCategoriesSection.schema import Query as homeCategoriesSectionQuery
 from account.schema import Query as AccountQuery, Mutation as AccountMutation
 
 
@@ -20,6 +21,7 @@ class Query(
     PageQuery,
     StockQuery,
     AccountQuery,
+    homeCategoriesSectionQuery,
     graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name="_debug")
 

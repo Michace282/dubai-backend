@@ -53,6 +53,7 @@ INSTALLED_APPS += [
 
 INSTALLED_APPS += [
     'product',
+    'homeCategoriesSection',
     'account',
     'page',
     'stock',

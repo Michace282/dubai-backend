@@ -15,6 +15,7 @@ from django.core.validators import FileExtensionValidator
 class ProductTypeSection(TimeStampedModel):
     class Type(DjangoChoices):
         ladies = ChoiceItem(label='Ladies', value='ladies')
+        kids_dancewear = ChoiceItem(label='Kids Dancewear', value='Kids Dancewear')
         mens = ChoiceItem(label='Mens', value='mens')
         accessories = ChoiceItem(label='Accessories', value='Accessories')
         dance_shoes = ChoiceItem(label='Dance shoes', value='Dance shoes')
@@ -27,6 +28,7 @@ class ProductTypeSection(TimeStampedModel):
         trousers = ChoiceItem(label='Trousers(old)', value='Trousers(old)')
         jumpsuits = ChoiceItem(label='Jumpsuits', value='Jumpsuits')
         tops = ChoiceItem(label='Tops', value='Tops')
+        bottoms = ChoiceItem(label='Bottoms', value='bottoms')
         shorts = ChoiceItem(label='Shorts', value='Shorts')
         trousers = ChoiceItem(label='Trousers', value='Trousers')
         waistcoasts = ChoiceItem(label='Waistcoasts', value='Waistcoasts')
@@ -105,6 +107,8 @@ class Color(TimeStampedModel):
         verbose_name = 'Color'
         verbose_name_plural = 'Colors'
 
+import os, time, uuid        
+from django.utils.deconstruct import deconstructible
 
 class Product(TimeStampedModel):
     class StatusType(DjangoChoices):
@@ -118,6 +122,15 @@ class Product(TimeStampedModel):
         accessories = ChoiceItem(label='Accessories', value='accessories')
         dance_shoes = ChoiceItem(label='Dance shoes', value='dance_shoes')
         performance_costumes = ChoiceItem(label='Performance costumes', value='performance_costumes')
+        kids_dancewear = ChoiceItem(label='Kids Dancewear', value='kids_dancewear')
+        
+
+    class KidsDancewearType(DjangoChoices):
+        tops = ChoiceItem(label='Tops', value='tops')
+        bottoms = ChoiceItem(label='Bottoms', value='bottoms')
+        dresses = ChoiceItem(label='Dresses', value='dresses')
+        jumpsuits = ChoiceItem(label='Jumpsuits', value='jumpsuits')
+        dance_shoes = ChoiceItem(label='Dance shoes', value='dance_shoes')
 
     class LadiesType(DjangoChoices):
         leotards = ChoiceItem(label='Leotards', value='leotards')
@@ -178,12 +191,36 @@ class Product(TimeStampedModel):
                                         max_length=30,
                                         choices=DanceShoesType.choices, blank=True,
                                         null=True)
+    kids_dancewear_type = models.CharField(verbose_name='Kids Dancewear type',
+                                   max_length=30,
+                                   choices=KidsDancewearType.choices,
+                                   blank=True,
+                                   null=True)
 
     article = models.CharField(verbose_name='Article', max_length=30)
     price = models.PositiveIntegerField(verbose_name='Price')
     price_sale = models.PositiveIntegerField(verbose_name='Price Old')
     is_new = models.BooleanField(verbose_name='Is New')
-    video = models.FileField(upload_to='product/video',null=True, blank=True,
+
+    class PathAndRename(object):
+
+        def __init__(self, sub_path):
+            self.path = sub_path
+
+        def __call__(self, instance, filename):
+            # eg: filename = 'my uploaded file.jpg'
+            ext = filename.split('.')[-1]  #eg: '.jpg'
+            uid = uuid.uuid4().hex[:10]    #eg: '567ae32f97'
+
+            # eg: '64c942aa64.jpg'
+            renamed_filename = '%(uid)s.%(ext)s' % {'uid': uid, 'ext': ext}
+
+            # eg: 'images/2017/01/29/my-uploaded-file_64c942aa64.jpg'
+            return os.path.join(self.path, renamed_filename)
+
+    video_path = time.strftime('product/video/%Y/%m/%d') 
+
+    video = models.FileField(upload_to=PathAndRename(video_path),null=True, blank=True,
     validators=[FileExtensionValidator(allowed_extensions=['MOV','avi','mp4','webm','mkv'])])
     description = models.TextField(verbose_name='Description')
     model_description = models.TextField(verbose_name='Model description', blank=True, null=True)
